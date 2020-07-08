@@ -8,7 +8,7 @@ public class GridController : MonoBehaviour {
     public float perlinScale = 16;
     public Vector2 offsetChange = new Vector2(1, 0);
     private Vector2 offset;
-    
+
     public Material gridMaterial;
     private float[] _values;
     private ComputeBuffer buffer;
@@ -21,9 +21,6 @@ public class GridController : MonoBehaviour {
                 SetValue(x, y, Mathf.PerlinNoise((x + offset.x) * perlinScale, (y + offset.y) * perlinScale));
             }
         }
-        
-        // Debug.Log($"{_values.Length} values regenerated.");
-        // Debug.Log(String.Join(", ", _values.ToList().ConvertAll(i => i.ToString()).ToArray()));
     }
 
     private void Start() {
@@ -41,15 +38,9 @@ public class GridController : MonoBehaviour {
     }
 
     private void Update() {
-        // if (Input.GetKey("space")) {
-            // Debug.Log("Reloading values...");
-            regenerateValues();
-            // Debug.Log("Values generated. Updating Shader...");
-            UpdateShader();
-            // Debug.Log("Done.");
-            offset += offsetChange * Time.deltaTime;
-        // }
-        
+        regenerateValues();
+        UpdateShader();
+        offset += offsetChange * Time.deltaTime;
     }
 
     private void OnApplicationQuit() {
