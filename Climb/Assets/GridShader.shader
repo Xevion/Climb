@@ -3,14 +3,11 @@
 Shader "PDT Shaders/TestGrid" {
 	Properties {
 		_LineColor ("Line Color", Color) = (1,1,1,1)
-		_InactiveColor ("Cell Color", Color) = (0,0,0,0)
-		_ActiveColor ("Selected Color", Color) = (1,0,0,1)
+		_InactiveColor ("Inactive Color", Color) = (0,0,0,0)
+		_ActiveColor ("Active Color", Color) = (1,0,0,1)
 		[PerRendererData] _MainTex ("Albedo (RGB)", 2D) = "white" {}
 		[IntRange] _GridSize("Grid Size", Range(1,100)) = 10
 		_LineSize("Line Size", Range(0,1)) = 0.15
-		[IntRange] _SelectCell("Select Cell Toggle ( 0 = False , 1 = True )", Range(0,1)) = 0.0
-		[IntRange] _SelectedCellX("Selected Cell X", Range(0,100)) = 0.0
-		[IntRange] _SelectedCellY("Selected Cell Y", Range(0,100)) = 0.0
 	}
 	SubShader {
 		Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout" }
@@ -20,7 +17,6 @@ Shader "PDT Shaders/TestGrid" {
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
 		#pragma surface surf Standard fullforwardshadows
-		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 5.0
 
 		sampler2D _MainTex;
@@ -31,6 +27,7 @@ Shader "PDT Shaders/TestGrid" {
 
 		half _Glossiness = 0.0;
 		half _Metallic = 0.0;
+		
 		float4 _LineColor;
 		float4 _InactiveColor;
 		float4 _ActiveColor;
@@ -38,10 +35,7 @@ Shader "PDT Shaders/TestGrid" {
 		float _GridSize;
 		float _LineSize;
 
-		float _SelectCell;
-		float _SelectedCellX;
-		float _SelectedCellY;
-		
+        // DX11 needed to run shader at high grid sizes
 		#ifdef SHADER_API_D3D11
 		StructuredBuffer<float> _values;
 		#else
@@ -61,8 +55,6 @@ Shader "PDT Shaders/TestGrid" {
 			// Albedo comes from a texture tinted by color
 
 			float2 uv = IN.uv_MainTex;
-			_SelectedCellX = floor(_SelectedCellX);
-			_SelectedCellY = floor(_SelectedCellY);
 
 			fixed4 c = float4(0.0,0.0,0.0,0.0);
 			float gsize = floor(_GridSize);
