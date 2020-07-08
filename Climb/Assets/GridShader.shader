@@ -74,30 +74,23 @@ Shader "PDT Shaders/TestGrid" {
 			float brightness = _InactiveColor.w;
             
             // Line Color Check
-            if (frac(uv.x*gsize) <= _LineSize || frac(uv.y*gsize) <= _LineSize){
+            if (_LineSize > 0.0 && (frac(uv.x*gsize) <= _LineSize || frac(uv.y*gsize) <= _LineSize)){
 				color = _LineColor;
 				brightness = color.w;
-			// Selected Cell Check
-			} else if (round(_SelectCell) == 1.0 && id.x == _SelectedCellX && id.y == _SelectedCellY) {
-				color = _ActiveColor;
-				brightness = color.w;
-			// Heatmap Value Fallback
+            // Heatmap Value Fallback
 			} else {
 			    float pos = id.y * _GridSize + id.x;
-			    if(pos < _valueLength && _values[pos] >= 0.5) {
+			    if(pos < _valueLength) {
 			        color = lerp(_InactiveColor, _ActiveColor, _values[pos]);
 			        brightness = color.w;
 			    }
 			}
-			
 
-			//Clip transparent spots using alpha cutout
-			if (brightness == 0.0) {
+			// Clip transparent spots using alpha cutout
+			if (brightness == 0.0)
 				clip(c.a - 1.0);
-			}
 			
-
-			o.Albedo = float4( color.x*brightness,color.y*brightness,color.z*brightness,brightness);
+			o.Albedo = float4(color.x * brightness,color.y * brightness,color.z * brightness, brightness);
 			// Metallic and smoothness come from slider variables
 			o.Metallic = 0.0;
 			o.Smoothness = 0.0;
