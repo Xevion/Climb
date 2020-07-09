@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace Editor {
     [CustomEditor(typeof(GridController))]
@@ -14,6 +15,9 @@ namespace Editor {
                 controller.UpdateShader(PropertyName.Values);
                 controller.UpdateShader(PropertyName.ValueLength);
             }
+
+            controller.gridMaterial =
+                (Material) EditorGUILayout.ObjectField("Grid Material", controller.gridMaterial, typeof(Material));
             
             EditorGUI.BeginChangeCheck();
             controller.perlinScale = EditorGUILayout.Slider("Perlin Scale", controller.perlinScale, 0.001f, 0.5f);

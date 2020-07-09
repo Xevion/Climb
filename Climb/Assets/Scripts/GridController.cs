@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum PropertyName {
     GridSize,
@@ -15,11 +16,11 @@ public class GridController : MonoBehaviour {
     public int size = 32;
     public float perlinScale = 16;
     public Vector2 offsetChange = new Vector2(1, 0);
-    
+
     private Vector2 _offset;
     private float[] _values;
     private ComputeBuffer _buffer;
-    
+
     // Get all property IDs
     private static readonly int ValueLength = Shader.PropertyToID("_valueLength");
     private static readonly int Values = Shader.PropertyToID("_values");
@@ -29,7 +30,9 @@ public class GridController : MonoBehaviour {
         _values = new float[size * size];
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                SetValue(x, y, Mathf.PerlinNoise((x + _offset.x) * perlinScale, (y + _offset.y) * perlinScale));
+                // SetValue(x, y, Random.value);
+                SetValue(x, y,
+                    Mathf.PerlinNoise((x + _offset.x) * perlinScale, (y + _offset.y) * perlinScale));
             }
         }
     }
@@ -38,9 +41,9 @@ public class GridController : MonoBehaviour {
         _offset = new Vector2(0, 0);
         _buffer = new ComputeBuffer((int) Mathf.Pow(2048, 2), 4);
         RegenerateValues();
-        
+
         // Update all Shader properties
-        foreach(PropertyName property in Enum.GetValues(typeof(PropertyName)))
+        foreach (PropertyName property in Enum.GetValues(typeof(PropertyName)))
             UpdateShader(property);
     }
 
@@ -70,7 +73,7 @@ public class GridController : MonoBehaviour {
         // Regenerate new position then send values to Shader
         RegenerateValues();
         UpdateShader(PropertyName.Values);
-        
+
         // Move offset
         _offset += offsetChange * Time.deltaTime;
     }
